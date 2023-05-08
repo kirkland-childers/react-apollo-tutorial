@@ -1,8 +1,10 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import Link from './Link';
 import { gql, useQuery } from '@apollo/client';
 
 const LinkList = () => {
+  const [links, setLinks] = useState([]);
+  
   const FEED_QUERY = gql`
   {
     feed {
@@ -15,15 +17,20 @@ const LinkList = () => {
       }
     }
   }
-`;
+  `;
 
-  const { data } = useQuery(FEED_QUERY);
+  const { data, refetch } = useQuery(FEED_QUERY);
+
+useEffect(() => {
+  refetch();
+  setLinks(data);
+}, [data, refetch]);
 
 
 
   return (
     <div>
-      {data?.feed?.links.map((link) => (
+      {links?.feed?.links.map((link) => (
         <Link key={link.id} link={link} />
       ))}
     </div>
